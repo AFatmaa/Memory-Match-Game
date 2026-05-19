@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 
 export default function Player({ initialName, score, isActive }) {
   const [playerName, setPlayerName] = useState(initialName);
