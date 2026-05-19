@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import Player from "./components/Player";
 import GameBoard from "./components/GameBoard";
+import GameOver from "./components/GameOver";
 
 import { CARD_DATA } from "./cards";
 
@@ -19,6 +20,14 @@ function App() {
   const [cards, setCards] = useState(shuffleCards());
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
+  const isGameOver = cards.length > 0 && cards.every(card => card.matched);
+
+  let winner = null;
+  if (isGameOver) {
+    if (scores[1] > scores[2]) winner = "Player 1";
+    else if (scores[2] > scores[1]) winner = "Player 2";
+    else winner = "Draw";
+  }
 
   useEffect(() => {
     if (choiceOne && choiceTwo) {
@@ -56,6 +65,14 @@ function App() {
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   }
 
+  function handleRestart() {
+    setCards(shuffleCards());
+    setChoiceOne(null);
+    setChoiceTwo(null);
+    setScores({ 1: 0, 2: 0 });
+    setActivePlayer(1);
+  }
+
   return (
     <main>
       <h1>Memory Match</h1>
@@ -72,6 +89,9 @@ function App() {
             isActive={activePlayer === 2}
           />         
         </ol>
+
+        {isGameOver && <GameOver winner={winner} onRestart={handleRestart} />}
+        
         <GameBoard 
           cards={cards} 
           onChoice={handleChoice}
